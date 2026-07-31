@@ -86,16 +86,8 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      username,
-      firstname,
-      lastname,
-      phone,
-      address,
-      password,
-      birthday,
-      gender,
-    } = req.body;
+    const { username, firstname, lastname, phone, address, password } =
+      req.body;
     const updateUser = await User.findByIdAndUpdate(
       id,
       {
@@ -105,8 +97,6 @@ const updateUser = async (req, res) => {
         phone,
         address,
         password,
-        gender,
-        birthday,
       },
       { new: true },
     );
@@ -130,5 +120,28 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { postRegister, getUserById, getUsers, updateUser };
-  
+// Delete User
+
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const deleteUser = await User.findByIdAndDelete(userId);
+
+    if (!deleteUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User deleted successfully", deleteUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  postRegister,
+  getUserById,
+  getUsers,
+  updateUser,
+  deleteUser,
+};
