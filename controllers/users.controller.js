@@ -63,3 +63,72 @@ const getUsers = async (req, res) => {
     });
   }
 };
+
+// -----------------Get user by id -----------------
+
+const getUserById = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ message: "User found", user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal Server Eror" });
+  }
+};
+
+// -------------------------Update users--------------------
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      username,
+      firstname,
+      lastname,
+      phone,
+      address,
+      password,
+      birthday,
+      gender,
+    } = req.body;
+    const updateUser = await User.findByIdAndUpdate(
+      id,
+      {
+        username,
+        firstname,
+        lastname,
+        phone,
+        address,
+        password,
+        gender,
+        birthday,
+      },
+      { new: true },
+    );
+    if (!updateUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    res.json({
+      success: true,
+      message: "User updated successfully!",
+      user: updateUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { postRegister, getUserById, getUsers, updateUser };
+  
